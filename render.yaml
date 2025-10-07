@@ -22,3 +22,6 @@ services:
     scaling:
       minInstances: 1
       maxInstances: 1
+    healthCheckGracePeriod: 0
+    healthCheckInterval: 30
+    healthCheckTimeout: 10

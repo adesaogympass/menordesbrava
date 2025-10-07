@@ -9,6 +9,7 @@ import socketserver
 import threading
 import time
 import os
+import socket
 from datetime import datetime
 
 class HealthHandler(http.server.BaseHTTPRequestHandler):
@@ -29,16 +30,30 @@ class HealthHandler(http.server.BaseHTTPRequestHandler):
             <head>
                 <title>Kick Stream Live</title>
                 <meta charset="utf-8">
+                <meta http-equiv="refresh" content="30">
             </head>
             <body>
                 <h1>🎥 Kick Stream Live</h1>
                 <p>Stream ativo desde: {}</p>
                 <p>Status: ✅ Online</p>
                 <p>Health Check: <a href="/health">/health</a></p>
+                <p>Keep Alive: <a href="/keepalive">/keepalive</a></p>
+                <script>
+                    // Auto-refresh para manter ativo
+                    setInterval(function() {{
+                        fetch('/keepalive');
+                    }}, 30000);
+                </script>
             </body>
             </html>
             """.format(datetime.now().isoformat())
             self.wfile.write(html.encode())
+        elif self.path == '/keepalive':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            response = f"KEEPALIVE - {datetime.now().isoformat()}"
+            self.wfile.write(response.encode())
         else:
             self.send_response(404)
             self.end_headers()
@@ -51,8 +66,16 @@ def start_health_server():
     """Inicia o servidor de health check na porta do Render"""
     PORT = int(os.environ.get('PORT', 8080))
     
-    with socketserver.TCPServer(("", PORT), HealthHandler) as httpd:
+    # Configurar para manter conexões vivas
+    class KeepAliveTCPServer(socketserver.TCPServer):
+        allow_reuse_address = True
+        def server_bind(self):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            super().server_bind()
+    
+    with KeepAliveTCPServer(("", PORT), HealthHandler) as httpd:
         print(f"Health server iniciado na porta {PORT}")
+        print("Servidor configurado para manter instância ativa")
         httpd.serve_forever()
 
 def main():

@@ -43,7 +43,9 @@ echo "URL completa: $FULL_RTMP_URL"
 keep_alive() {
     while true; do
         echo "$(date): Heartbeat - Sistema ativo"
-        sleep 15
+        # Fazer requisição para o próprio health check
+        curl -s http://localhost:${PORT:-8080}/keepalive > /dev/null 2>&1 || true
+        sleep 10
     done
 }
 
