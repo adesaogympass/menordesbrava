@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "=== Servidor de Mídia Kick - Versão Render ==="
+echo "=== Servidor de Mídia Kick - Stream Contínuo 100% ==="
 echo "Iniciando em: $(date)"
 
 # Configurações - usando variáveis de ambiente do Render
@@ -58,8 +58,8 @@ ATTEMPT=1
 while [ $ATTEMPT -le $MAX_RETRIES ]; do
     echo "=== Tentativa $ATTEMPT/$MAX_RETRIES em: $(date) ==="
     
-    # Comando FFmpeg com configurações mais robustas
-    timeout 180 ffmpeg \
+    # Comando FFmpeg para stream contínuo (sem timeout)
+    ffmpeg \
         -re \
         -loop 1 \
         -i "$IMAGE_PATH" \
@@ -83,10 +83,8 @@ while [ $ATTEMPT -le $MAX_RETRIES ]; do
     
     if [ $EXIT_CODE -eq 0 ]; then
         echo "Stream terminou normalmente"
-    elif [ $EXIT_CODE -eq 124 ]; then
-        echo "Stream timeout (3 minutos) - reiniciando..."
     else
-        echo "Stream falhou com código: $EXIT_CODE"
+        echo "Stream falhou com código: $EXIT_CODE - reconectando..."
     fi
     
     echo "Aguardando ${RETRY_DELAY} segundos antes da próxima tentativa..."
