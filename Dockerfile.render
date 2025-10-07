@@ -1,0 +1,34 @@
+# Dockerfile otimizado para Render
+FROM alpine:latest
+
+# Instalar FFmpeg e dependências
+RUN apk add --no-cache \
+    ffmpeg \
+    ffmpeg-dev \
+    wget \
+    curl \
+    bash \
+    python3 \
+    py3-pip
+
+# Criar diretório de trabalho
+WORKDIR /app
+
+# Baixar a imagem da URL fornecida
+RUN wget -O live_image.png "https://i.ytimg.com/vi/IFF4ZS2TKh8/maxresdefault.jpg"
+
+# Copiar os scripts
+COPY start_stream_render.sh /app/start_stream_render.sh
+COPY health_server_render.py /app/health_server_render.py
+COPY start_services_render.sh /app/start_services_render.sh
+
+# Tornar os scripts executáveis
+RUN chmod +x /app/start_stream_render.sh
+RUN chmod +x /app/health_server_render.py
+RUN chmod +x /app/start_services_render.sh
+
+# Expor porta para Render (Render usa porta dinâmica)
+EXPOSE $PORT
+
+# Comando padrão - executar ambos os serviços
+CMD ["/app/start_services_render.sh"]

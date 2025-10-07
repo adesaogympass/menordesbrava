@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: kick-stream-live
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: RTMP_URL
+        value: rtmps://fa723fc1b171.global-contribute.live-video.net
+      - key: STREAM_KEY
+        value: sk_us-west-2_EjKsW9ogmEwb_1HyG6woK3Z95jdOJfLAYjPxSCvn8p7
+      - key: FPS
+        value: "30"
+      - key: BITRATE
+        value: "4000k"
+    healthCheckPath: /health
+    autoDeploy: true
+    scaling:
+      minInstances: 1
+      maxInstances: 1

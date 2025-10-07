@@ -1,0 +1,26 @@
+# Arquivos temporários
+*.tmp
+*.log
+*.pid
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de configuração local
+config.env
+.env
+
+# Arquivos do Fly.io (não precisamos mais)
+fly.toml
+Dockerfile
+Dockerfile.old
+start_stream.sh
+start_services.sh
+health_server.py
+
+# Arquivos antigos
+start_stream_old.sh
+health_check.sh
+nginx.conf
+setup.sh

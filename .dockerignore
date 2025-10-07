@@ -1,0 +1,10 @@
+# Arquivos a serem ignorados no build do Docker
+README.md
+config.env.example
+setup.sh
+health_check.sh
+.git
+.gitignore
+*.md
+.env
+.env.local
