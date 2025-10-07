@@ -20,7 +20,11 @@ python3 /app/health_server_render.py &
 HEALTH_PID=$!
 
 # Aguardar um pouco para o servidor de health inicializar
-sleep 2
+sleep 5
+
+# Verificar se o health server está funcionando
+echo "Verificando health server..."
+curl -s http://localhost:${PORT:-8080}/health || echo "Health server não respondeu"
 
 # Iniciar o stream
 echo "Iniciando stream..."
